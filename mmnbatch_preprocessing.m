@@ -1,4 +1,16 @@
-function results=mmnbatch_preprocessing(file_bdf, channelselection, reference, sensors, trialdef)
+%this function runs the preprocessing and averaging of the eeg data
+
+%Please provide:
+
+%eeg_data- path to your raw .bdf eeg data
+%channelselection- path to the file wiith the channel selection
+%reference- path to the file with reference
+%sensors- path to sensors file
+%trialdef- path to a file with trial definition
+%results_folder- where you want your results to d=be stored
+%results_file- pattern of naming your results file
+
+function results=mmnbatch_preprocessing(eeg_data, channelselection, reference, sensors, trialdef, results_folder, results_file)
 
 %'C:\Data_negativity\subject1.bdf'
 %'C:\Data_negativity\channelselection.mat'
@@ -6,11 +18,17 @@ function results=mmnbatch_preprocessing(file_bdf, channelselection, reference, s
 %'C:\Data_negativity\sensors.pol'
 %'C:\Data_negativity\trialdef.mat'
 
+%cd(results_folder);
+%addpath(results_folder);
+spm('Defaults','fMRI');
+spm_jobman('initcfg');
 
-matlabbatch{1}.spm.meeg.convert.dataset = {file_bdf};
+clear matlabbatch
+matlabbatch{1}.spm.meeg.convert.dataset = {eeg_data};
 matlabbatch{1}.spm.meeg.convert.mode.continuous.readall = 1;
 matlabbatch{1}.spm.meeg.convert.channels{1}.chanfile = {channelselection};
-matlabbatch{1}.spm.meeg.convert.outfile = '';
+matlabbatch{1}.spm.meeg.convert.outfile = fullfile(results_folder, results_file);
+%matlabbatch{1}.spm.meeg.convert.outfile = '';
 matlabbatch{1}.spm.meeg.convert.eventpadding = 0;
 matlabbatch{1}.spm.meeg.convert.blocksize = 3276800;
 matlabbatch{1}.spm.meeg.convert.checkboundary = 1;
