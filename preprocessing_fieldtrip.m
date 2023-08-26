@@ -120,9 +120,18 @@ cfg.artfctdef.threshold.min = 80;
 cfg.artfctdef.threshold.max = 100;  
 cfg.channel = 'all';  % Select channels for artifact rejection
 cfg.method = 'threshold';
-data_clean = ft_rejectartifact(cfg, data_trial_standard);
+data_clean_standard = ft_rejectartifact(cfg, data_trial_standard);
 
-save(output_dir, "data_clean");
+save(fullfile(output_dir, 'data_standard'),"data_clean_standard");
+
+cfg = [];
+cfg.artfctdef.threshold.min = 80;
+cfg.artfctdef.threshold.max = 100;  
+cfg.channel = 'all';  % Select channels for artifact rejection
+cfg.method = 'threshold';
+data_clean_rare = ft_rejectartifact(cfg, data_trial_rare);
+
+save(fullfile(output_dir, 'data_rare'),"data_clean_rare");
 % Averaging
 cfg=[];
 cfg.keeptrials = 'no';
