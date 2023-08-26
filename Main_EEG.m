@@ -8,6 +8,8 @@
 root_directory='C:/Data_negativity/BIDS_EEG'; %where your main data folder is stored
 subjectID = 'sub-01';
 
+fieldtrip_path='C:/spm12/external/fieldtrip';%can be different for everyone
+
 %the results of preparation steps (not sure where those should be saved?)
 
 channelselection= 'C:/Data_negativity/channelselection.mat';
@@ -31,7 +33,7 @@ results_file='sub-01_task-rest_eeg'; % how we want our output files to be named
 
 
 %spm script that runs preprocessing and calculates ERPs
-mmnbatch_preprocessing(eeg_data, channelselection,reference, sensors,trialdef, results_folder, results_file); 
+%mmnbatch_preprocessing(eeg_data, channelselection,reference, sensors,trialdef, results_folder, results_file); 
 
 
 %spm script that does sensor 
@@ -41,9 +43,18 @@ mmnbatch_preprocessing(eeg_data, channelselection,reference, sensors,trialdef, r
 
 %FIELDTRIP PIPELINE
 
-output_dir=fullfile(rootDir, 'derivatives','FieldTrip',subjectID,'eeg');
+
+
+
+addpath(fieldtrip_path);
+
+output_dir=fullfile(root_directory, 'derivatives','FieldTrip',subjectID,'eeg');
 mkdir(output_dir);
 %preprocessing and averaging
 
 preprocessing_fieldtrip(eeg_data,sensors, output_dir);
+
+%sensors
+
+sensor_space_fieldtrip(output_dir);
 
