@@ -67,12 +67,20 @@ save(fullfile(output_dir,'data_all'), "data_all")
 elec_pos = ft_read_sens(sensors);
 
 
+cfg=[];
+cfg.bsfilter = 'yes';
+cfg.bsfreq = [48 52];
+data_bs=ft_preprocessing(cfg, data_all);
+
 % High-pass filter
 cfg = [];
 cfg.hpfilter = 'yes';
 cfg.hpfreq = .1;
 cfg.hpinstabilityfix = 'reduce';
-data_hp = ft_preprocessing(cfg, data_all);
+
+data_bs = ft_preprocessing(cfg, data_all);
+
+
 
 % Downsample 
 cfg=[];
@@ -88,15 +96,17 @@ data_lp = ft_preprocessing(cfg, data_downsampled);
 save(fullfile(output_dir,'data_lp'),"data_lp");
 
 % Epoching
-cfg = [];
-cfg.dataset             = raw_data;
-cfg.trialdef.eventtype = '?';
-dummy                   = ft_definetrial(cfg);
+%cfg = [];
+%cfg.dataset             = raw_data;
+%cfg.trialdef.eventtype = '?';
+%cfg.trialdef.prestim   = 0.1;                  
+%cfg.trialdef.poststim  = 0.4;  
+%dummy                   = ft_definetrial(cfg);
 
 % Prepare to segment into epochs around standard trials
 cfg                    = [];
-cfg.trialdef.prestim   = -0.1;                  
-cfg.trialdef.poststim  = 0.4;                  
+cfg.trialdef.prestim   = 0.04;                  
+cfg.trialdef.poststim  = 0.158;                  
 cfg.trialdef.eventtype = 'STATUS'; 
 cfg.trialdef.eventvalue = 65152;
 cfg.dataset            = raw_data;            
@@ -116,38 +126,76 @@ save(fullfile(output_dir,'data_trial_standard'), "data_trial_standard");
 %find artifacts- threshold
 
 cfg = [];
-cfg.artfctdef.threshold.min = 80;
-cfg.artfctdef.threshold.max = 100;  
+cfg.artfctdef.threshold.min = -80;
+cfg.artfctdef.threshold.max = 80;  
+cfg.continuous='no';
 cfg.channel = 'all';  % Select channels for artifact rejection
 cfg.method = 'threshold';
-data_clean_standard = ft_rejectartifact(cfg, data_trial_standard);
+[cfg, artifact_standard ]= ft_artifact_threshold(cfg, data_trial_standard);
+
+cfg=[];
+cfg.channel='all';
+cfg.continuous='no';
+%cfg.reject='complete';
+cfg.artfctdef.xxx.artifact=artifact_standard;
+data_clean_standard=ft_rejectartifact(cfg, data_trial_standard);
+
 
 save(fullfile(output_dir, 'data_standard'),"data_clean_standard");
 
 cfg = [];
-cfg.artfctdef.threshold.min = 80;
-cfg.artfctdef.threshold.max = 100;  
+cfg.artfctdef.threshold.min = -80;
+cfg.artfctdef.threshold.max = 80; 
+cfg.continuous='no';
 cfg.channel = 'all';  % Select channels for artifact rejection
 cfg.method = 'threshold';
-data_clean_rare = ft_rejectartifact(cfg, data_trial_rare);
+[cfg, artifact_rare] = ft_artifact_threshold(cfg, data_trial_rare);
+
+
+cfg=[];
+cfg.channel='all';
+cfg.reject='complete';
+cfg.artfctdef.xxx.artifact=artifact_rare;
+data_clean_rare=ft_rejectartifact(cfg, data_trial_rare);
 
 save(fullfile(output_dir, 'data_rare'),"data_clean_rare");
 % Averaging
 cfg=[];
 cfg.keeptrials = 'no';
-average_standard = ft_timelockanalysis(cfg, data_trial_standard);
+cfg.robust='yes';
 
+average_standard = ft_timelockanalysis(cfg, data_clean_standard);
+%cfg=[];
+%cfg.baseline     = [-0.1 0];
+%average_standard=ft_timelockbaseline(cfg, average_standard);
 save(fullfile(output_dir,'average_standard'), "average_standard");
+
+
+
+
+cfg=[];
+cfg.keeptrials= 'no';
+cfg.robust='yes';
+
+average_rare = ft_timelockanalysis(cfg, data_clean_rare);
+
+%cfg=[];
+%cfg.baseline     = [-0.1 0];
+%average_rare=ft_timelockbaseline(cfg, average_rare);
+
+save(fullfile(output_dir,'average_rare'), "average_rare");
 
 % Plot
 figure
 pol = -1;
-h1 = plot(average_standard.time, average_standard.avg, 'color', [0,0,0.5]);
 
-cfg=[];
-cfg.keeptrials= 'no';
-average_rare = ft_timelockanalysis(cfg, data_trial_rare);
+h1 = plot(average_standard.time, average_standard.avg(87,:), 'color', [0,0,0.5]);
+legend('Standard');
+hold on;
+h2 = plot(average_rare.time, average_rare.avg(87,:), 'color', [1,0,0]);
+legend('Standard','Rare');
+xlabel('Time (s)');
+ylabel('Amplitude (uV)');
 
-save(fullfile(output_dir,'average_rare'), "average_rare");
 
 
