@@ -1,3 +1,8 @@
+% The function sensor_space_fieldtrip performs sensor space analysis on EEG data using the FieldTrip toolbox. 
+% It loads preprocessed EEG data for 'rare' and 'standard' conditions from a specified directory. 
+% Then, it sets up a design matrix and performs statistical tests using an independent samples T-test with Bonferroni correction. 
+% Finally, the function saves the statistical results and the design matrix back into the output directory.
+
 function sensor_space_fieldtrip(output_dir)
 
 % Load the data necessary for statistical analysis
