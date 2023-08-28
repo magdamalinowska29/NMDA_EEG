@@ -22,6 +22,20 @@ matlabbatch{1}.spm.meeg.images.convert2images.timewin = [-Inf Inf];
 matlabbatch{1}.spm.meeg.images.convert2images.freqwin = [-Inf Inf];
 matlabbatch{1}.spm.meeg.images.convert2images.prefix = '';
 
+
+% Define the paths to the 4D NIFTI files and convert them to 3D
+standard_nii_path = 'C:\data\eegdata\aefdfMspmeeg_subject1\condition_standard.nii,1';
+rare_nii_path = 'C:\data\eegdata\aefdfMspmeeg_subject1\condition_rare.nii,1';
+
+% Convert the standard condition 4D NIFTI to 3D
+matlabbatch{2}.spm.util.split.vol = {standard_nii_path};
+matlabbatch{2}.spm.util.split.outdir = {''}; % Output to the same directory
+
+% Convert the rare condition 4D NIFTI to 3D
+matlabbatch{3}.spm.util.split.vol = {rare_nii_path};
+matlabbatch{3}.spm.util.split.outdir = {''}; % Output to the same directory
+
+
 % Use SPM's file selection utility to identify relevant NIFTI files
 condition_standard = spm_select('FPList', eeg_data, '^condition_standard.*\.nii$');
 condition_rare = spm_select('FPList', eeg_data, '^condition_rare.*\.nii$');
