@@ -36,10 +36,16 @@ results_file='sub-01_task-rest_eeg'; % how we want our output files to be named
 %mmnbatch_preprocessing(eeg_data, channelselection,reference, sensors,trialdef, results_folder, results_file); 
 
 
-%spm script that does sensor 
+%sensors space analysis
 
+%creating an output directory for the statistical inference
 
+output_dir_statinf=fullfile(root_directory, 'sensor_space_analysis','XYTStats');
+mkdir(output_dir_statinf);
 
+%running the analysis
+
+sensor_space_analysis(results_folder,output_dir_statinf);
 
 %FIELDTRIP PIPELINE
 
@@ -58,14 +64,7 @@ preprocessing_fieldtrip(eeg_data,sensors, output_dir);
 
 sensor_space_fieldtrip(output_dir);
 
-%sensors space analysis
 
-%creating an output directory for the statistical inference
 
-output_dir_statinf=fullfile(root_directory, 'sensor_space_analysis','XYTStats');
-mkdir(output_dir_statinf);
 
-%running the analysis
-
-sensor_space_analysis(results_folder,output_dir_statinf);
 
