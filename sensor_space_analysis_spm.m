@@ -2,7 +2,6 @@
 spmPath = 'C:\Users\Marida\Documents\MATLAB\spm12';
 data_path = 'C:\data\eegdata\aefdfMspmeeg_subject1';
 spmmat_path = 'C:\data\eegdata\XYTstats';
-input_mat_file = 'C:\data\eegdata\aefdfMspmeeg_subject1.mat';
 
 % Add SPM12 to MATLAB's search path
 addpath(spmPath);
@@ -16,28 +15,11 @@ spm_jobman('initcfg');
 % Clear any existing matlabbatch variables
 clear matlabbatch;
 
-% Configure the 'Convert to Images' job parameters
-matlabbatch{1}.spm.meeg.images.convert2images.D = {input_mat_file};
-matlabbatch{1}.spm.meeg.images.convert2images.mode = 'scalp x time';
-matlabbatch{1}.spm.meeg.images.convert2images.channels{1}.type = 'EEG';
-
-% Define the paths to the 4D NIFTI files and convert them to 3D
-standard_nii_path = 'C:\data\eegdata\aefdfMspmeeg_subject1\condition_standard.nii,1';
-rare_nii_path = 'C:\data\eegdata\aefdfMspmeeg_subject1\condition_rare.nii,1';
-
-% Convert the standard condition 4D NIFTI to 3D
-matlabbatch{2}.spm.util.split.vol = {standard_nii_path};
-matlabbatch{2}.spm.util.split.outdir = {''}; % Output to the same directory
-
-% Convert the rare condition 4D NIFTI to 3D
-matlabbatch{3}.spm.util.split.vol = {rare_nii_path};
-matlabbatch{3}.spm.util.split.outdir = {''}; % Output to the same directory
 %% File Selection
 % Use SPM's file selection utility to identify relevant NIFTI files
 condition_standard = spm_select('FPList', data_path, '^condition_standard.*\.nii$');
 condition_rare = spm_select('FPList', data_path, '^condition_rare.*\.nii$');
 
-%% Sensor Space analysis
 %% Batch Configuration
 % Factorial Design Specification
 matlabbatch{1}.spm.stats.factorial_design.dir = {spmmat_path};
