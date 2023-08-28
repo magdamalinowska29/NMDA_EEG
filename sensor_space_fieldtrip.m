@@ -18,7 +18,7 @@ design(1:num_trials_rare)         = 1;
 design((num_trials_rare + 1):end) = 2;
 
 % Configuration for statistical testing in FieldTrip
-cfg = [];
+cfg = [];                                   % Initialize an empty configuration structure
 cfg.method    = 'analytic';                 % Use the analytic method for a parametric t-test
 cfg.statistic = 'ft_statfun_indepsamplesT'; % Independent samples T-statistic
 cfg.correctm  = 'bonferroni';               % Bonferroni correction for multiple comparisons
