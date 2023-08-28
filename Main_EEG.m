@@ -40,7 +40,7 @@ results_file='sub-01_task-rest_eeg'; % how we want our output files to be named
 
 %creating an output directory for the statistical inference
 
-output_dir_statinf=fullfile(root_directory, 'sensor_space_analysis','XYTStats');
+output_dir_statinf=fullfile(root_directory, 'derivatives','spm','subjectID','eeg','sensor_space_analysis','XYTStats');
 mkdir(output_dir_statinf);
 
 %running the analysis
