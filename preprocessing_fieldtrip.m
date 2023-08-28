@@ -140,8 +140,8 @@ data_clean_standard=ft_rejectartifact(cfg, data_trial_standard);
 save(fullfile(output_dir, 'data_standard'),"data_clean_standard");
 
 cfg = [];
-cfg.artfctdef.threshold.min = -800;
-cfg.artfctdef.threshold.max = 800; 
+cfg.artfctdef.threshold.min = -80;
+cfg.artfctdef.threshold.max = 80; 
 cfg.continuous='no';
 cfg.channel = 'all';  % Select channels for artifact rejection
 cfg.method = 'threshold';
@@ -191,7 +191,7 @@ hold on;
 h2 = plot(average_rare.time, average_rare.avg(87,:), 'color', [1,0,0]);
 legend('Standard','Rare');
 xlabel('Time (s)');
-ylabel('Amplitude (uV)');
+ylabel('Amplitude');
 
 
 
