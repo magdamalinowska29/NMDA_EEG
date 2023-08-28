@@ -67,18 +67,13 @@ save(fullfile(output_dir,'data_all'), "data_all")
 elec_pos = ft_read_sens(sensors);
 
 
-cfg=[];
-cfg.bsfilter = 'yes';
-cfg.bsfreq = [48 52];
-data_bs=ft_preprocessing(cfg, data_all);
-
 % High-pass filter
 cfg = [];
 cfg.hpfilter = 'yes';
 cfg.hpfreq = .1;
 cfg.hpinstabilityfix = 'reduce';
 
-data_bs = ft_preprocessing(cfg, data_all);
+data_hp = ft_preprocessing(cfg, data_all);
 
 
 
@@ -91,6 +86,7 @@ data_downsampled = ft_resampledata(cfg, data_hp);
 cfg = [];
 cfg.lpfilter = 'yes';
 cfg.lpfreq = 30;
+cfg.baseline=[-0.1 0];
 data_lp = ft_preprocessing(cfg, data_downsampled);
 
 save(fullfile(output_dir,'data_lp'),"data_lp");
@@ -126,8 +122,8 @@ save(fullfile(output_dir,'data_trial_standard'), "data_trial_standard");
 %find artifacts- threshold
 
 cfg = [];
-cfg.artfctdef.threshold.min = -80;
-cfg.artfctdef.threshold.max = 80;  
+cfg.artfctdef.threshold.min = -800;
+cfg.artfctdef.threshold.max = 800;  
 cfg.continuous='no';
 cfg.channel = 'all';  % Select channels for artifact rejection
 cfg.method = 'threshold';
@@ -144,8 +140,8 @@ data_clean_standard=ft_rejectartifact(cfg, data_trial_standard);
 save(fullfile(output_dir, 'data_standard'),"data_clean_standard");
 
 cfg = [];
-cfg.artfctdef.threshold.min = -80;
-cfg.artfctdef.threshold.max = 80; 
+cfg.artfctdef.threshold.min = -800;
+cfg.artfctdef.threshold.max = 800; 
 cfg.continuous='no';
 cfg.channel = 'all';  % Select channels for artifact rejection
 cfg.method = 'threshold';
@@ -165,9 +161,9 @@ cfg.keeptrials = 'no';
 cfg.robust='yes';
 
 average_standard = ft_timelockanalysis(cfg, data_clean_standard);
-%cfg=[];
-%cfg.baseline     = [-0.1 0];
-%average_standard=ft_timelockbaseline(cfg, average_standard);
+cfg=[];
+cfg.baseline     = [-0.1 0];
+average_standard=ft_timelockbaseline(cfg, average_standard);
 save(fullfile(output_dir,'average_standard'), "average_standard");
 
 
@@ -179,9 +175,9 @@ cfg.robust='yes';
 
 average_rare = ft_timelockanalysis(cfg, data_clean_rare);
 
-%cfg=[];
-%cfg.baseline     = [-0.1 0];
-%average_rare=ft_timelockbaseline(cfg, average_rare);
+cfg=[];
+cfg.baseline     = [-0.1 0];
+average_rare=ft_timelockbaseline(cfg, average_rare);
 
 save(fullfile(output_dir,'average_rare'), "average_rare");
 
